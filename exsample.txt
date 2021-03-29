@@ -1,0 +1,9 @@
+mixin(provider/Products.dartで用いたwith)について
+
+extendsで継承した場合は@overrideによって親クラスから継承したメソッドなどを書き換えることが可能
+extendsで継承したものは 親クラス = 子クラス と言える
+extendsとwithは併用可能
+extendsは一つしか付けれないが、withは複数をつけることも可能
+
+
+
