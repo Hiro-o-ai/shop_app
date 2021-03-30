@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../models/product.dart';
+import 'product.dart';
 
 // withとextendの大きな違いは自分が定義したものに持ってきたクラスのプロパティやメソッドを加える点
 class Products with ChangeNotifier {
