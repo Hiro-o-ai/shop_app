@@ -19,7 +19,7 @@ class ProductItem extends StatelessWidget {
     final product = Provider.of<Product>(context);
     // consumerにdataのタイプを明示しないといけない、そして、それはプロバイダーでないといけない
     // こうすることで上位にプロバイダーwidgetを持つのと近い意味になる
-    // consumerを使用するメリットはconsumerの子widgetのみがrebuild対象となるので、widgetの一部のみを対象にするなどができるようになる
+    // consumerを使用するメリットはconsumerのbuilder:widgetのみがrebuild対象となるので、widgetの一部のみを対象にするなどができるようになる
     // return Consumer<Product>(
     // builder: (context, value, child) となっており,valueはProductのインスタンス(Provider.of<Product>(context);)となっている
     // childは => 以下のことを指す
@@ -44,6 +44,7 @@ class ProductItem extends StatelessWidget {
           backgroundColor: Colors.black87,
           // これでfavoriteButtonのみがrebuidされる
           leading: Consumer<Product>(
+            // おそらくConsumerのchild:のwidgetはrebuildされない
             builder: (context, product, child) => IconButton(
               // この中ではchildという単語の使用ができない
               icon: Icon(
