@@ -10,8 +10,11 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (ctx) => Products(),
+    return ChangeNotifierProvider.value(
+      // create:(_)=>と等価の方法、ChangeNotifierProviderに.valueをつけることを忘れずに
+      value: Products(),
+      // このcreateにはctxがなくても問題はないので(_)でも構わない
+      // create: (ctx) => Products(),
       child: MaterialApp(
         title: 'Myshop',
         theme: ThemeData(

@@ -27,9 +27,12 @@ class ProductsGrid extends StatelessWidget {
       // changenorifierproviderはpruducts[i]から作るよ
       // その子がproductItemだよ
       // productsはList<Product>つまり、providerがたくさん入ったリストだよ
-      itemBuilder: (ctx, i) => ChangeNotifierProvider(
+
+      // providerには古いwidgetをなくす機能があるが.valueはそれを保持するため、最後までメモリーを使用する点に注意が必要
+      itemBuilder: (ctx, i) => ChangeNotifierProvider.value(
+        value: products[i],
         // ProductItemにはproducts[i]の情報のみが提供されているよ
-        create: (c) => products[i],
+        // create: (c) => products[i],
         child: ProductItem(
             // products[i].id,
             // products[i].title,
