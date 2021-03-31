@@ -15,7 +15,15 @@ class ProductItem extends StatelessWidget {
   Widget build(BuildContext context) {
     // productItemはproductsのlength分widgetが作成されており、かくproductItemの上位にあるChangeNotifier<Product>は別物となっている
     // だからproductから引っ張ってこれるデータも異なる
+    // comsumerをreturnの後に持ってきた場合は下のコードをコメントアウトできる
     final product = Provider.of<Product>(context);
+    // consumerにdataのタイプを明示しないといけない、そして、それはプロバイダーでないといけない
+    // こうすることで上位にプロバイダーwidgetを持つのと近い意味になる
+    // consumerを使用するメリットはconsumerの子widgetのみがrebuild対象となるので、widgetの一部のみを対象にするなどができるようになる
+    // return Consumer<Product>(
+    // builder: (context, value, child) となっており,valueはProductのインスタンス(Provider.of<Product>(context);)となっている
+    // childは => 以下のことを指す
+    // builder: (context, product, child) =>
     // 使い方：角を丸くするなどをさせたい場合にClipRRectでwrapする
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
@@ -34,13 +42,17 @@ class ProductItem extends StatelessWidget {
         ),
         footer: GridTileBar(
           backgroundColor: Colors.black87,
-          leading: IconButton(
-            icon: Icon(
-                product.isFavorite ? Icons.favorite : Icons.favorite_border),
-            onPressed: () {
-              product.toggleFavoriteStatus();
-            },
-            color: Theme.of(context).accentColor,
+          // これでfavoriteButtonのみがrebuidされる
+          leading: Consumer<Product>(
+            builder: (context, product, child) => IconButton(
+              // この中ではchildという単語の使用ができない
+              icon: Icon(
+                  product.isFavorite ? Icons.favorite : Icons.favorite_border),
+              onPressed: () {
+                product.toggleFavoriteStatus();
+              },
+              color: Theme.of(context).accentColor,
+            ),
           ),
           title: Text(
             product.title,
