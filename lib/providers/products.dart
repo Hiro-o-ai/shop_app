@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'product.dart';
+import './product.dart';
 
 // withとextendの大きな違いは自分が定義したものに持ってきたクラスのプロパティやメソッドを加える点
 class Products with ChangeNotifier {
@@ -49,11 +49,17 @@ class Products with ChangeNotifier {
     return [..._items];
   }
 
+  List<Product> get favoriteItems {
+    return _items.where((producItem) => producItem.isFavorite).toList();
+  }
+
   // データの型はreturnされるデータの型だからProductでOK
   Product findById(String id) {
     return _items.firstWhere((prod) => prod.id == id);
   }
 
+  // この方法によるお気に入りのみの表示法では新しいスクリーン(商品一覧したいなど)も全てお気に入りのみの表示となる
+  // 全体で適用したい場合をのぞき、この方法は推奨されない
   // void showFavoritesOnly() {
   //   _showFavoritesOnly = true;
   //   notifyListeners();
