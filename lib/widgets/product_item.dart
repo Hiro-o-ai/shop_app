@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../providers/cart.dart';
 import '../screens/product_detail_screen.dart';
 import '../providers/product.dart';
 
@@ -24,6 +25,8 @@ class ProductItem extends StatelessWidget {
     // builder: (context, value, child) となっており,valueはProductのインスタンス(Provider.of<Product>(context);)となっている
     // childは => 以下のことを指す
     // builder: (context, product, child) =>
+    // listen falseなのはこの画面ではItemをCartに加えるが、そのことによってこの画面をrebuildさせる必要がないため
+    final cart = Provider.of<Cart>(context, listen: false);
     // 使い方：角を丸くするなどをさせたい場合にClipRRectでwrapする
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
@@ -61,7 +64,13 @@ class ProductItem extends StatelessWidget {
           ),
           trailing: IconButton(
             icon: Icon(Icons.shopping_cart),
-            onPressed: () {},
+            onPressed: () {
+              cart.addItem(
+                product.id,
+                product.price,
+                product.title,
+              );
+            },
             color: Theme.of(context).accentColor,
           ),
         ),
