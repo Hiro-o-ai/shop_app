@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import './providers/cart.dart';
 import './screens/products_overview_screen.dart';
 import './screens/product_detail_screen.dart';
 import './providers/products.dart';
@@ -13,11 +14,21 @@ class MyApp extends StatelessWidget {
     // .valueは同じオブジェクトを再利用する場合(このアプリのproducts_grid)には適しているが、
     // main.dartには無駄な処理を含むので、create:(ctx) => Products()
     // createは新しいインスタンスを作成していることを認識すること
-    return ChangeNotifierProvider.value(
-      // create:(_)=>と等価の方法、ChangeNotifierProviderに.valueをつけることを忘れずに
-      value: Products(),
-      // このcreateにはctxがなくても問題はないので(_)でも構わない
-      // create: (ctx) => Products(),
+    // return ChangeNotifierProvider.value(
+    // create:(_)=>と等価の方法、ChangeNotifierProviderに.valueをつけることを忘れずに
+    // value: Products(),
+    // このcreateにはctxがなくても問題はないので(_)でも構わない
+    // create: (ctx) => Products(),
+    return MultiProvider(
+      // ただし、新規のインスタンスを作成する場合はcreateを使った方が良いらしい
+      providers: [
+        ChangeNotifierProvider(
+          create: (ctx) => Products(),
+        ),
+        ChangeNotifierProvider(
+          create: (ctx) => Cart(),
+        ),
+      ],
       child: MaterialApp(
         title: 'Myshop',
         theme: ThemeData(
