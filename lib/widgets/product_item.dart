@@ -70,6 +70,29 @@ class ProductItem extends StatelessWidget {
                 product.price,
                 product.title,
               );
+              // snackBarは現在のsnackbarがtimeoutするまでは次が表示されないので、その対策
+              // Scaffold.of(context).hideCurrentSnackBar();
+              // flutter2からは下記が推奨されている
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              // 同じwidgettree内(同じファイル)にScaffoldが2つあると機能しなくなるので注意
+              // Scaffold.of(context).openDrawer();でproducts_overviewで使用しているwidgetを使うこともできる！！
+              // Scaffold.of(context).showSnackBar(
+              // flutter2からは下記が推奨されている
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    'Added item to cart!',
+                    // textAlign: TextAlign.center,
+                  ),
+                  duration: Duration(seconds: 2),
+                  action: SnackBarAction(
+                    label: 'UNDO',
+                    onPressed: () {
+                      cart.removeSingleItem(product.id);
+                    },
+                  ),
+                ),
+              );
             },
             color: Theme.of(context).accentColor,
           ),
