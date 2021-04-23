@@ -31,7 +31,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
   }
 
   void _updateImageUrl() {
-    if (!_imageURLFocusNode.hasFocus) {}
+    if (!_imageURLFocusNode.hasFocus) {
+      setState(() {});
+    }
   }
 
   @override
