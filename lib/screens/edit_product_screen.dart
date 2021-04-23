@@ -11,12 +11,27 @@ class EditProductScreen extends StatefulWidget {
 class _EditProductScreenState extends State<EditProductScreen> {
   final _priceFocusNode = FocusNode();
   final _descriptionFocusNode = FocusNode();
+  final _imageURLController = TextEditingController();
+  final _imageURLFocusNode = FocusNode();
+
+  @override
+  void initState() {
+    _imageURLFocusNode.addListener(_updateImageUrl);
+    super.initState();
+  }
 
   @override
   void dispose() {
+    _imageURLFocusNode.removeListener(_updateImageUrl);
     _priceFocusNode.dispose();
     _descriptionFocusNode.dispose();
+    _imageURLController.dispose();
+    _imageURLFocusNode.dispose();
     super.dispose();
+  }
+
+  void _updateImageUrl() {
+    if (!_imageURLFocusNode.hasFocus) {}
   }
 
   @override
@@ -57,6 +72,46 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 },
                 focusNode: _descriptionFocusNode,
               ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[
+                  Container(
+                    width: 100,
+                    height: 100,
+                    margin: EdgeInsets.only(
+                      top: 8,
+                      right: 10,
+                    ),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        width: 1,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    child: _imageURLController.text.isEmpty
+                        ? Text('Enter a URL')
+                        : FittedBox(
+                            child: Image.network(
+                              _imageURLController.text,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                  ),
+                  // expandedはwidthに関わるエラーは改善できるが、heightは厳しい
+                  Expanded(
+                    child: TextFormField(
+                      decoration: InputDecoration(labelText: 'Image URL'),
+                      keyboardType: TextInputType.url,
+                      textInputAction: TextInputAction.done,
+                      controller: _imageURLController,
+                      onEditingComplete: () {
+                        setState(() {});
+                      },
+                      focusNode: _imageURLFocusNode,
+                    ),
+                  ),
+                ],
+              )
             ],
           ),
         ),
