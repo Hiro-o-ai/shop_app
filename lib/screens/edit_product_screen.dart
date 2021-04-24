@@ -52,6 +52,11 @@ class _EditProductScreenState extends State<EditProductScreen> {
   }
 
   void _saveForm() {
+    final isValid = _form.currentState.validate();
+    // これでsave()メソッドが起動しない
+    if (isValid) {
+      return;
+    }
     _form.currentState.save();
     // チェック用
     // print(_editedProduct.title);
@@ -79,11 +84,22 @@ class _EditProductScreenState extends State<EditProductScreen> {
           child: ListView(
             children: <Widget>[
               TextFormField(
+                // decorationのInputDecorationのプロパティにエラーメッセージのfontsizeなどを変えるものがある
                 decoration: InputDecoration(labelText: 'Title'),
                 textInputAction: TextInputAction.next,
                 // requestFocusで指定しているFocusNodeにキーボードの決定ボタンを押すと飛ぶようになる
                 onFieldSubmitted: (_) {
                   FocusScope.of(context).requestFocus(_priceFocusNode);
+                },
+                validator: (value) {
+                  // inputに問題がないとなるので、エラーが生じない
+                  // return null;
+                  // 下記の場合は文面がエラー文となり常にエラーとなる
+                  // return 'This is wrong';
+                  if (value.isEmpty) {
+                    return 'Please provide a value.';
+                  }
+                  return null;
                 },
                 onSaved: (value) {
                   _editedProduct = Product(
