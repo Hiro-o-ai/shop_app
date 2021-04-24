@@ -47,6 +47,14 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
   void _updateImageUrl() {
     if (!_imageURLFocusNode.hasFocus) {
+      if (_imageURLController.text.isEmpty ||
+          _imageURLController.text.startsWith('http') ||
+          _imageURLController.text.startsWith('https') ||
+          (!_imageURLController.text.endsWith('.png') &&
+              !_imageURLController.text.endsWith('.jpg') &&
+              !_imageURLController.text.endsWith('.jpeg'))) {
+        return;
+      }
       setState(() {});
     }
   }
@@ -119,6 +127,19 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 onFieldSubmitted: (_) {
                   FocusScope.of(context).requestFocus(_descriptionFocusNode);
                 },
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Please enter a price';
+                  }
+                  // tryParseは数値に変換できなくてもエラーとならないメソッド
+                  if (double.tryParse(value) == null) {
+                    return 'Please enter a valid number.';
+                  }
+                  if (double.parse(value) <= 0) {
+                    return 'Please enter a number greater than zero';
+                  }
+                  return null;
+                },
                 // valueは常にstringなので注意
                 onSaved: (value) {
                   _editedProduct = Product(
@@ -135,6 +156,15 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 keyboardType: TextInputType.multiline,
                 onFieldSubmitted: (_) {
                   FocusScope.of(context).requestFocus(_priceFocusNode);
+                },
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Please enter a description';
+                  }
+                  if (value.length < 10) {
+                    return 'Should be at least 10 characters long';
+                  }
+                  return null;
                 },
                 onSaved: (value) {
                   _editedProduct = Product(
@@ -185,6 +215,24 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       // onFieldSubmittedはFunction(String)を必要としているが、_saveFormはそうではないので、onFieldSubmitted: _saveFormができない
                       onFieldSubmitted: (_) {
                         _saveForm();
+                      },
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Please enter an image URL';
+                        }
+                        // if (!value.startsWith('http') &&
+                        //     !value.startsWith('https'))
+                        // 上としたは同じ意味
+                        if (value.startsWith('http') ||
+                            value.startsWith('https')) {
+                          return 'Please enter a valid URL.';
+                        }
+                        if (!value.endsWith('.png') &&
+                            !value.endsWith('.jpg') &&
+                            !value.endsWith('.jpeg')) {
+                          return 'Please enter a valid image URL';
+                        }
+                        return null;
                       },
                       onSaved: (value) {
                         _editedProduct = Product(
