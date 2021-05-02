@@ -73,11 +73,11 @@ class Products with ChangeNotifier {
   //   notifyListeners();
   // }
 
-  void addProduct(Product product) {
+  Future<void> addProduct(Product product) {
     final url =
         Uri.https('test-ed3c8-default-rtdb.firebaseio.com', '/products.json');
     // var response = await
-    http
+    return http
         .post(
       url,
       body: json.encode({
@@ -88,6 +88,8 @@ class Products with ChangeNotifier {
         'isFavorite': product.isFavorite,
       }),
     )
+        // .catchError((error){})といったこともできる
+        // これは一文のみにエラーが考えられる場合はtry..catchよりも有用である
         .then((response) {
       print(json.decode(response.body));
       // printの結果:{name: firebaseが生成したID}
@@ -101,6 +103,8 @@ class Products with ChangeNotifier {
       // _items.insert(0, newProduct);  start of the list
       notifyListeners();
     });
+    // 下記のようにすると先にreturnが実行されるので、むり
+    // return Future.value();
   }
 
   void updateProduct(String id, Product newProduct) {
