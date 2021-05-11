@@ -74,8 +74,7 @@ class Products with ChangeNotifier {
   // }
 
   Future<void> addProduct(Product product) {
-    final url =
-        Uri.https('test-ed3c8-default-rtdb.firebaseio.com', '/products.json');
+    final url = Uri.https('test-ed3c8-default-rtdb.firebaseio.com', '/prod');
     // var response = await
     return http
         .post(
@@ -102,6 +101,10 @@ class Products with ChangeNotifier {
       _items.add(newProduct);
       // _items.insert(0, newProduct);  start of the list
       notifyListeners();
+    }).catchError((error) {
+      // print(error);
+      // throwしないとaddProductで.catcherrorが使えない
+      throw (error);
     });
     // 下記のようにすると先にreturnが実行されるので、むり
     // return Future.value();
