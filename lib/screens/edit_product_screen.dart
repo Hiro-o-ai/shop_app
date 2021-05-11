@@ -97,7 +97,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     }
   }
 
-  void _saveForm() {
+  Future<void> _saveForm() async {
     final isValid = _form.currentState.validate();
     // これでsave()メソッドが起動しない
     if (isValid) {
@@ -115,11 +115,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
       });
       Navigator.of(context).pop();
     } else {
-      Provider.of<Products>(context, listen: false)
-          .addProduct(_editedProduct)
-          .catchError((error) {
-        // returnにしないと表示されない catcherrorのreturnの型がNullなので、しっかりと変更すること
-        return showDialog<Null>(
+      try {
+        // returnがnullのため.catchErrorが使えないので、try{}catchにした
+        await Provider.of<Products>(context, listen: false)
+            .addProduct(_editedProduct);
+      } catch (error) {
+        await showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
             title: Text('An error occurred!'),
@@ -134,12 +135,32 @@ class _EditProductScreenState extends State<EditProductScreen> {
             ],
           ),
         );
-      }).then((_) {
+        // .catchError((error) {
+        // returnにしないと表示されない catcherrorのreturnの型がNullなので、しっかりと変更すること
+        // return showDialog<Null>(
+        //   context: context,
+        //   builder: (ctx) => AlertDialog(
+        //     title: Text('An error occurred!'),
+        //     content: Text('Something went wrong!'),
+        //     actions: <Widget>[
+        //       FlatButton(
+        //         onPressed: () {
+        //           Navigator.of(ctx).pop();
+        //         },
+        //         child: Text('Okay'),
+        //       ),
+        //     ],
+        //   ),
+        // );
+        // }).then((_) {
+      } finally {
+        // trycatchでエラーが発生してもしなくても実行される
         setState(() {
           _isLoading = false;
         });
         Navigator.of(context).pop();
-      });
+        // });
+      }
     }
     // context is widget
     // Navigator.of(context).pop();

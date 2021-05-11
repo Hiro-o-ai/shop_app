@@ -73,24 +73,25 @@ class Products with ChangeNotifier {
   //   notifyListeners();
   // }
 
-  Future<void> addProduct(Product product) {
+  // asyncをつけると全てがfutureのreturnとなる→thenを使用しなくともよくなる　自動的に上から順に実行される
+  Future<void> addProduct(Product product) async {
     final url = Uri.https('test-ed3c8-default-rtdb.firebaseio.com', '/prod');
     // var response = await
-    return http
-        .post(
-      url,
-      body: json.encode({
-        'title': product.title,
-        'description': product.description,
-        'imageUrl': product.imageUrl,
-        'price': product.price,
-        'isFavorite': product.isFavorite,
-      }),
-    )
-        // .catchError((error){})といったこともできる
-        // これは一文のみにエラーが考えられる場合はtry..catchよりも有用である
-        .then((response) {
-      print(json.decode(response.body));
+    try {
+      final response = await http.post(
+        url,
+        body: json.encode({
+          'title': product.title,
+          'description': product.description,
+          'imageUrl': product.imageUrl,
+          'price': product.price,
+          'isFavorite': product.isFavorite,
+        }),
+      );
+      // .catchError((error){})といったこともできる
+      // これは一文のみにエラーが考えられる場合はtry..catchよりも有用である
+      // .then((response) {
+      // print(json.decode(response.body));
       // printの結果:{name: firebaseが生成したID}
       final newProduct = Product(
           id: json.decode(response.body)['name'],
@@ -101,11 +102,14 @@ class Products with ChangeNotifier {
       _items.add(newProduct);
       // _items.insert(0, newProduct);  start of the list
       notifyListeners();
-    }).catchError((error) {
-      // print(error);
-      // throwしないとaddProductで.catcherrorが使えない
+    } catch (error) {
       throw (error);
-    });
+    }
+    // }).catchError((error) {
+    // print(error);
+    // throwしないとaddProductで.catcherrorが使えない
+    // throw (error);
+    // });
     // 下記のようにすると先にreturnが実行されるので、むり
     // return Future.value();
   }
