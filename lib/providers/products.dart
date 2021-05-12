@@ -73,9 +73,22 @@ class Products with ChangeNotifier {
   //   notifyListeners();
   // }
 
+  Future<void> fetchAndSetProducts() async {
+    // urlを実行してから変換するのでconstは使用できない
+    final url =
+        Uri.https('test-ed3c8-default-rtdb.firebaseio.com', '/products.json');
+    try {
+      final response = await http.get(url);
+      print(json.decode(response.body));
+    } catch (error) {
+      throw (error);
+    }
+  }
+
   // asyncをつけると全てがfutureのreturnとなる→thenを使用しなくともよくなる　自動的に上から順に実行される
   Future<void> addProduct(Product product) async {
-    final url = Uri.https('test-ed3c8-default-rtdb.firebaseio.com', '/prod');
+    final url =
+        Uri.https('test-ed3c8-default-rtdb.firebaseio.com', '/products.json');
     // var response = await
     try {
       final response = await http.post(

@@ -120,6 +120,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
         await Provider.of<Products>(context, listen: false)
             .addProduct(_editedProduct);
       } catch (error) {
+        // awaitがないとエラーが発生する
         await showDialog(
           context: context,
           builder: (ctx) => AlertDialog(

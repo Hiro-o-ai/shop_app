@@ -7,6 +7,7 @@ import '../widgets/products_grid.dart';
 import '../widgets/badge.dart';
 import '../widgets/app_drawer.dart';
 import '../providers/cart.dart';
+import '../providers/products.dart';
 import './cart_screen.dart';
 
 enum FilterOptions {
@@ -22,6 +23,32 @@ class ProductsOverviewScreen extends StatefulWidget {
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   // boolは型に対する注釈、varは型推論で型が決まる
   var _showOnlyFavorites = false;
+  var _isInit = true;
+
+  // このwidgetが作成されたときのみ起動するので商品データをfirebaseから持ってくるのにぴったり
+  @override
+  void initState() {
+    // contextはStateの中ならどこでも使えるよ
+    // このままではエラーが発生するよ、contextのあたりが原因で
+    // でもlisten falseにすることで回避できるよ
+    // おそらくState classができる前にproviderのwidgetがinherited widgetとして動いてしまうことが原因？
+    Provider.of<Products>(context, listen: false).fetchAndSetProducts();
+    // listen falseにしないときの回避策その１?→やっぱりできないwww
+    // Future.delayed(Duration.zero).then((_) {
+    //   Provider.of<Products>(context).fetchAndSetProducts();
+    // });
+    super.initState();
+  }
+
+  // listen falseにしないときの回避策その2
+  // @override
+  // void didChangeDependencies() {
+  //   if (_isInit) {
+  //     Provider.of<Products>(context).fetchAndSetProducts();
+  //   }
+  //   _isInit = false;
+  //   super.didChangeDependencies();
+  // }
 
   @override
   Widget build(BuildContext context) {
