@@ -24,6 +24,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   // boolは型に対する注釈、varは型推論で型が決まる
   var _showOnlyFavorites = false;
   var _isInit = true;
+  var _isLoading = false;
 
   // このwidgetが作成されたときのみ起動するので商品データをfirebaseから持ってくるのにぴったり
   @override
@@ -32,7 +33,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
     // このままではエラーが発生するよ、contextのあたりが原因で
     // でもlisten falseにすることで回避できるよ
     // おそらくState classができる前にproviderのwidgetがinherited widgetとして動いてしまうことが原因？
-    Provider.of<Products>(context, listen: false).fetchAndSetProducts();
+    // Provider.of<Products>(context, listen: false).fetchAndSetProducts();
     // listen falseにしないときの回避策その１?→やっぱりできないwww
     // Future.delayed(Duration.zero).then((_) {
     //   Provider.of<Products>(context).fetchAndSetProducts();
@@ -41,14 +42,21 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   }
 
   // listen falseにしないときの回避策その2
-  // @override
-  // void didChangeDependencies() {
-  //   if (_isInit) {
-  //     Provider.of<Products>(context).fetchAndSetProducts();
-  //   }
-  //   _isInit = false;
-  //   super.didChangeDependencies();
-  // }
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      setState(() {
+        _isLoading = true;
+      });
+      Provider.of<Products>(context).fetchAndSetProducts().then((_) {
+        setState(() {
+          _isLoading = false;
+        });
+      });
+    }
+    _isInit = false;
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -109,7 +117,11 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
         ],
       ),
       drawer: AppDrawer(),
-      body: ProductsGrid(_showOnlyFavorites),
+      body: _isLoading
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : ProductsGrid(_showOnlyFavorites),
     );
   }
 }
