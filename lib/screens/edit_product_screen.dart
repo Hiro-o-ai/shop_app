@@ -108,12 +108,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
       _isLoading = true;
     });
     if (_editedProduct.id != null) {
-      Provider.of<Products>(context, listen: false)
+      await Provider.of<Products>(context, listen: false)
           .updateProduct(_editedProduct.id, _editedProduct);
-      setState(() {
-        _isLoading = false;
-      });
-      Navigator.of(context).pop();
+      // setState(() {
+      //   _isLoading = false;
+      // });
+      // Navigator.of(context).pop();
     } else {
       try {
         // returnがnullのため.catchErrorが使えないので、try{}catchにした
@@ -154,15 +154,20 @@ class _EditProductScreenState extends State<EditProductScreen> {
         //   ),
         // );
         // }).then((_) {
-      } finally {
-        // trycatchでエラーが発生してもしなくても実行される
-        setState(() {
-          _isLoading = false;
-        });
-        Navigator.of(context).pop();
-        // });
       }
+      // finally {
+      //   // trycatchでエラーが発生してもしなくても実行される
+      //   setState(() {
+      //     _isLoading = false;
+      //   });
+      //   Navigator.of(context).pop();
+      //   // });
+      // }
     }
+    setState(() {
+      _isLoading = false;
+    });
+    Navigator.of(context).pop();
     // context is widget
     // Navigator.of(context).pop();
     // チェック用
