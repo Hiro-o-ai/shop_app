@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import './product.dart';
+import '../models/http_exception.dart';
 
 // withとextendの大きな違いは自分が定義したものに持ってきたクラスのプロパティやメソッドを加える点
 class Products with ChangeNotifier {
@@ -165,7 +166,22 @@ class Products with ChangeNotifier {
   }
 
   void deleteProduct(String id) {
+    final url = Uri.https(
+        'test-ed3c8-default-rtdb.firebaseio.com', '/products/$id.json');
+    final existingProductIndex = _items.indexWhere((prod) => prod.id == id);
+    var exisitingProduct = _items[existingProductIndex];
     _items.removeWhere((prod) => prod.id == id);
     notifyListeners();
+    http.delete(url).then((response) {
+      // もしdeleteを行った際にサーバー側の問題などでDBのデータが削除されなかった場合はstatusCodeで400などが
+      // 返ってくるだけで、エラーにはならない。そのため下記のようにこちら側でエラーを発生させる
+      if (response.statusCode >= 400) {
+        throw HttpException('Could not delete product.');
+      }
+      exisitingProduct = null;
+    }).catchError((_) {
+      _items.insert(existingProductIndex, exisitingProduct);
+      notifyListeners();
+    });
   }
 }
